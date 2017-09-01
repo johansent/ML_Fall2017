@@ -33,6 +33,8 @@ plt.plot(D, errorsTest, label = 'Test Error')
 plt.legend()
 plt.show()
 
+print('min is ', min(errorsTest), ' at d = ', np.argmin(errorsTest) + 1)
+
     
     
 
