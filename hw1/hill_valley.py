@@ -7,11 +7,14 @@ Created on Tue Aug 29 12:41:24 2017
 
 # hill-valley data
 from import_data import import_data
-
-X, Y, Xtest, Ytest = import_data('X.dat', 'Xtest.dat', 'Y.dat', 'Ytest.dat')
-
-
 from sklearn import tree
+import sklearn
+import numpy as np
+
+
+X, Y, Xtest, Ytest = import_data('hill_valley','X.dat', 'Xtest.dat', 'Y.dat', 'Ytest.dat')
+
+
 clf = tree.DecisionTreeClassifier()
 clf = clf.fit(X, Y)
     
