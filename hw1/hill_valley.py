@@ -12,7 +12,7 @@ import sklearn
 import numpy as np
 
 
-X, Y, Xtest, Ytest = import_data('hill_valley','X.dat', 'Xtest.dat', 'Y.dat', 'Ytest.dat')
+X, Y, Xtest, Ytest = import_data('hill_valley','X.dat', 'Xtest.dat', 'Y.dat', 'Ytest.dat', head = None)
 
 
 clf = tree.DecisionTreeClassifier()
