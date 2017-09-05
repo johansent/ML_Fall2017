@@ -1,0 +1,69 @@
+---
+title: "Python test"
+author: "Thomas Johansen"
+date: "September 5, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{python def_fun}
+import pandas
+import os
+import os.path
+
+def import_data(path, train1, test1, train2 = None, test2 = None, col = -1, head = 0):
+    #filepath = 'C:/Users/joh10/Desktop/FSU/FA17/5635/hw1/Data' + path
+    filepath = os.pardir + '\\Data\\' + path + '\\'
+    
+### NOTE: add header, otherwise we miss first row    
+    train_data = pandas.read_table(filepath + train1, sep = ' ', header = head)
+    if train2 != None:
+        train2_data = pandas.read_table(filepath + train2, sep = ' ', header = head)
+    #else:
+        # separate training data, if not already
+        
+        
+
+    
+    test_data = pandas.read_table(filepath + test1, sep = ' ', header = head)
+    if test2 != None:
+        test2_data = pandas.read_table(filepath + test2, sep = ' ', header = head)
+    #else:
+        ## separate test data, if not already
+
+    return train_data, train2_data, test_data, test2_data
+
+#from import_data import import_data
+from sklearn import tree
+import matplotlib.pyplot as plt
+import sklearn
+import numpy as np
+
+X, Y, Xtest, Ytest = import_data('madelon', 'madelon_train.data', 'madelon_valid.data','madelon_train.labels', 'madelon_valid.labels', head = None)
+X.drop(X.columns[len(X.columns)-1], axis=1, inplace=True)
+Xtest.drop(Xtest.columns[len(Xtest.columns)-1], axis=1, inplace=True)  #conner.xyz  at https://stackoverflow.com/questions/20517650/how-to-delete-the-last-column-of-data-of-a-pandas-dataframe
+
+errorsTrain = []
+errorsTest = []
+D = range(1,2)
+for d in D:
+    clf = tree.DecisionTreeClassifier(max_depth = d)
+    clf = clf.fit(X, Y)
+    
+    error = 1 - clf.score(X, Y)
+    errorsTrain.append(error)
+    
+    error = 1-clf.score(Xtest, Ytest)
+    errorsTest.append(error)
+    
+plt.plot(D, errorsTrain, label = 'Training Error')
+plt.plot(D, errorsTest, label = 'Test Error')
+plt.legend()
+#plt.show()
+
+print('min is ', min(errorsTest), ' at d = ', np.argmin(errorsTest) + 1)
+```
+
