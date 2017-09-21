@@ -19,10 +19,23 @@ X.drop(X.columns[len(X.columns)-1], axis=1, inplace=True)
 Xtest.drop(Xtest.columns[len(Xtest.columns)-1], axis=1, inplace=True)  #conner.xyz  at https://stackoverflow.com/questions/20517650/how-to-delete-the-last-column-of-data-of-a-pandas-dataframe
 
 #Normalize the Data
-X = pandas.core.frame.DataFrame(preprocessing.scale(X))
-Xtest = pandas.core.frame.DataFrame(preprocessing.scale(Xtest))
+X = preprocessing.scale(X)
+Xtest = preprocessing.scale(Xtest)
 
+#initialize variables
+Nrow = len(X)
+Ncol = len(X[0])
+w = [0]*Ncol
 
+learningRate = 1
+lam = .001
 
-
+for k in range(300):
+    for r in X:
+        for c in r:
+            i = i + 1
+    if i > 10:
+        break
+    
+    
 
