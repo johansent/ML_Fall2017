@@ -22,31 +22,39 @@ X = preprocessing.scale(X)
 Xtest = preprocessing.scale(Xtest)
 
 #Add column of 1s
-X = np.array(np.c_[np.ones((len(X), 1)), np.matrix(X)])
+X1 = np.array(np.c_[np.ones((len(X), 1)), np.matrix(X)])
 
 #initialize variables
 Nrow = len(X)
-Ncol = len(X[0])
+Ncol = len(X1[0])
 w = [0]*(Ncol)
 
 learningRate = 1
 lam = .001
         
 
-for i in range(300):
+for i in range(3):
+    tmp = w[1:Ncol]
+    product = np.dot(X,tmp)
+    shiftedValue = w[0] + product
+    expValue = np.exp(shiftedValue)
+    ratio = expValue / (1 + expValue)
+    error = Y[0] - ratio
+   
     for k in range(Ncol):
-        dL = 0
-#        print(w[0])
-        for j,r in enumerate(X):
-#            if j == 0:
-#                tmp = w[0] + np.dot(w[1:len(w)], r[1:len(r)])
-#                print(tmp)
-            e_dotprod = np.exp(w[0] + np.dot(w[1:len(w)], r[1:len(r)]))
-#            print(np.shape(w))
-            dLnew = r[k]*(Y[0][j] - e_dotprod/(1 + e_dotprod))
-#            print(np.shape(w))
-            dL = dL + dLnew
+        dLnew = X1[:,k] * error
+        dL = sum(dLnew)
+#        for j in range(Nrow):
+##            if j == 0:
+##                tmp = w[0] + np.dot(w[1:len(w)], r[1:len(r)])
+##                print(tmp)
+#            #e_dotprod = np.exp(w[0] + np.dot(tmp, r[1:Nrow]))
+##            print(np.shape(w))
+#            dLnew = r[k]*(Y[0][j] - e_dotprod/(1 + e_dotprod))
+##            print(np.shape(w))
+#            dL = dL + dLnew
         w[k] = w[k] - learningRate*lam*w[k] + learningRate*dL/Nrow
+    print(i)
         
      
      
