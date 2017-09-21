@@ -21,46 +21,34 @@ Xtest.drop(Xtest.columns[len(Xtest.columns)-1], axis=1, inplace=True)  #conner.x
 X = preprocessing.scale(X)
 Xtest = preprocessing.scale(Xtest)
 
+#Add column of 1s
+X = np.array(np.c_[np.ones((len(X), 1)), np.matrix(X)])
+
 #initialize variables
 Nrow = len(X)
 Ncol = len(X[0])
-w = [0]*(Ncol + 1)
+w = [0]*(Ncol)
 
 learningRate = 1
 lam = .001
         
 
 for i in range(300):
-    for k in range(Ncol + 1):
-        j = 0
+    for k in range(Ncol):
         dL = 0
-        for r in X:
-            exp = np.exp(w[0] + np.dot(np.matrix(w[1:len(w)]), np.transpose(np.matrix(r))))
-            dLnew = r[j]*(Y[j] - exp/(1 - exp))
+        print(np.shape(w))
+        for j,r in enumerate(X):
+            
+            e_dotprod = np.exp(w[0] + np.dot(np.matrix(w[1:len(w)]), np.transpose(np.matrix(r[1:len(r)]))))
+#            print(np.shape(w))
+            dLnew = r[k]*(Y[0][j] - e_dotprod/(1 + e_dotprod))
+#            print(np.shape(w))
             dL = dL + dLnew
-            j = j + 1
         w[k] = w[k] - learningRate*lam*w[k] + learningRate*dL/Nrow
         
      
      
-for k in range(1):
-    j = 0
-    for r in X:
-#        print(np.dot(np.matrix(w[1:len(w)]), np.transpose(np.matrix(r))))
-        exp = np.exp(w[0] + np.dot(np.matrix(w[1:len(w)]), np.transpose(np.matrix(r))))
-        newdL = np.array(r)*(Y[j] - exp/(1 - exp))
-#        dL = dL + newdL
-        j = j + 1
-        #for c in r:
-#        i = i + 1
-#        print(i)
-#        print(type(r))
-#        print(np.shape(r))
-#        tmp = np.transpose(np.matrix(r))
-#        print(type(tmp))
-#        print(np.shape(tmp))
-#        if i == 1:
-#            break
+
     
     
 
