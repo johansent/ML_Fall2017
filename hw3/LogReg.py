@@ -36,10 +36,12 @@ lam = .001
 for i in range(300):
     for k in range(Ncol):
         dL = 0
-        print(np.shape(w))
+#        print(w[0])
         for j,r in enumerate(X):
-            
-            e_dotprod = np.exp(w[0] + np.dot(np.matrix(w[1:len(w)]), np.transpose(np.matrix(r[1:len(r)]))))
+#            if j == 0:
+#                tmp = w[0] + np.dot(w[1:len(w)], r[1:len(r)])
+#                print(tmp)
+            e_dotprod = np.exp(w[0] + np.dot(w[1:len(w)], r[1:len(r)]))
 #            print(np.shape(w))
             dLnew = r[k]*(Y[0][j] - e_dotprod/(1 + e_dotprod))
 #            print(np.shape(w))
