@@ -102,28 +102,63 @@ def TrainWeights(X,Y,Xtest,Ytest,k):
     return y1,y2
     
 
-##Gisette Data
-#    
-##Read in the Data
-#X, Y, Xtest, Ytest = import_data('gisette', 'gisette_train.data', 'gisette_valid.data','gisette_train.labels', 'gisette_valid.labels', head = None)
-#X.drop(X.columns[len(X.columns)-1], axis=1, inplace=True)
-#Xtest.drop(Xtest.columns[len(Xtest.columns)-1], axis=1, inplace=True)  #conner.xyz  at https://stackoverflow.com/questions/20517650/how-to-delete-the-last-column-of-data-of-a-pandas-dataframe
-#
-#w = TrainWeights(X,Y)
-##print(w)
+
+### Script
+import timeit
+start = timeit.default_timer()
+min_table = {}
+
+#Gisette Data
+    
+#Read in the Data
+X, Y, Xtest, Ytest = import_data('gisette', 'gisette_train.data', 'gisette_valid.data','gisette_train.labels', 'gisette_valid.labels', head = None)
+X.drop(X.columns[len(X.columns)-1], axis=1, inplace=True)
+Xtest.drop(Xtest.columns[len(Xtest.columns)-1], axis=1, inplace=True)  #conner.xyz  at https://stackoverflow.com/questions/20517650/how-to-delete-the-last-column-of-data-of-a-pandas-dataframe
+
+niter = 30
+y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter)
+
+Plot(range(niter), y1, y2, 'Gisette Errors')
+min_table['Gisette      '] = [min(y1), min(y2)]
+
 
 #Arcene Test
 X, Y, Xtest, Ytest = import_data('arcene', 'arcene_train.data', 'arcene_valid.data','arcene_train.labels', 'arcene_valid.labels', head = None)
 X.drop(X.columns[len(X.columns)-1], axis=1, inplace=True)
 Xtest.drop(Xtest.columns[len(Xtest.columns)-1], axis=1, inplace=True)
 
-y1, y2 = TrainWeights(X,Y,Xtest,Ytest,30)
+niter = 30
+y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter)
 
-    
-Plot(range(30), y1, y2, 'Arcene Errors')
+Plot(range(niter), y1, y2, 'Arcene Errors')
 #Plot(K,eTest,eTrain,'Arcene')
+min_table['Arcene      '] = [min(y1), min(y2)]
 
-#min_table['Arcene      '] = [min(eTest), K[np.argmin(eTest)]]
+# Madelon
+X, Y, Xtest, Ytest = import_data('madelon', 'madelon_train.data', 'madelon_valid.data','madelon_train.labels', 'madelon_valid.labels', head = None)
+X.drop(X.columns[len(X.columns)-1], axis=1, inplace=True)
+Xtest.drop(Xtest.columns[len(Xtest.columns)-1], axis=1, inplace=True)
+
+niter = 500
+y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter)
+
+Plot(range(niter), y1, y2, 'Madelon Errors', 3)
+min_table['Madelon      '] = [min(y1), min(y2)]
+
+
+# Hill/Valley
+X, Y, Xtest, Ytest = import_data('hill_valley', 'X.dat', 'Xtest.dat','Y.dat', 'Ytest.dat', head = None)
+
+niter = 300
+y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter)
+
+Plot(range(niter), y1, y2, 'Hill/Valley Errors', 3)
+min_table['Hill/Valley      '] = [min(y1), min(y2)]
+
+print(min_table)
+stop = timeit.default_timer()
+print(stop - start)
+
      
      
 
