@@ -13,33 +13,39 @@ import sklearn
 import numpy as np
 
 def TrainWeights(X,Y,k):
+    X = preprocessing.scale(X)
     Y = [0 if y <= 0 else 1 for y in np.array(Y)]
     X1 = np.array(np.c_[np.ones((len(X), 1)), np.matrix(X)])
     #initialize variables
     Nrow = len(X)
     Ncol = len(X1[0])
-    w = [0]*(Ncol)
+    w = np.array([0]*(Ncol))
 
-    learningRate = .01
+    learningRate = .1
     lam = .001
         
 
     for i in range(k):
         tmp = w[1:Ncol]
         product = np.dot(X,tmp)
-        print('product', product)
+        #print('product', product)
         shiftedValue = w[0] + product
-        print('shiftedValue',shiftedValue)
+        #print('shiftedValue',shiftedValue)
         expValue = np.exp(shiftedValue)
-        print('expValue', expValue)
+        #print('expValue', expValue)
         ratio = expValue / (1 + expValue)
-        print('ratio',ratio)
-        error = Y[0] - ratio
-        print('error',error)
+        #print('ratio',ratio)
+        error = Y - ratio
+        #print('error',error)
+        
+        
         dLnew = np.dot(np.transpose(X1),error)
-        print('dLnew',dLnew)
-        dL = np.sum(dLnew)
-        w = w - learningRate * (lam*w + dL/Nrow)
+        #print('dLnew',dLnew)
+        w = w + learningRate * (-lam*w + dLnew/Nrow)
+        
+#        dL = np.sum(dLnew)
+#        print('Dl', dL)
+#        w = w - learningRate * (lam*w + dL/Nrow)
            
         #for k in range(Ncol):
             #dL = sum(dLnew)
@@ -58,6 +64,7 @@ def TrainWeights(X,Y,k):
 
 def Test(w, X, Y):
     #Add column of 1s
+    X = preprocessing.scale(X)
     X = np.array(np.c_[np.ones((len(X), 1)), np.matrix(X)])
     Y = [0 if y <= 0 else 1 for y in np.array(Y)]
     wx = 1/(1+np.exp(-1 * np.dot(X, w)))
@@ -90,7 +97,13 @@ X, Y, Xtest, Ytest = import_data('arcene', 'arcene_train.data', 'arcene_valid.da
 X.drop(X.columns[len(X.columns)-1], axis=1, inplace=True)
 Xtest.drop(Xtest.columns[len(Xtest.columns)-1], axis=1, inplace=True)
 
+
+
 w = TrainWeights(X,Y,2)
+print(w)
+w = TrainWeights(X,Y,300)
+print(w)
+
 print(Test(w,Xtest, Ytest))
 #Plot(K,eTest,eTrain,'Arcene')
 
