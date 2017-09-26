@@ -12,36 +12,34 @@ import matplotlib.pyplot as plt
 import sklearn
 import numpy as np
 
-def TrainWeights(X,Y,k):
-    X = preprocessing.scale(X)
-    Y = [0 if y <= 0 else 1 for y in np.array(Y)]
-    X1 = np.array(np.c_[np.ones((len(X), 1)), np.matrix(X)])
-    #initialize variables
-    Nrow = len(X)
-    Ncol = len(X1[0])
-    w = np.array([0]*(Ncol))
-
-    learningRate = .1
-    lam = .001
+def updateWeights(X,X1,Y,w, Ncol,Nrow, learningRate, lam):
+#    X = preprocessing.scale(X)
+#    Y = [0 if y <= 0 else 1 for y in np.array(Y)]
+#    X1 = np.array(np.c_[np.ones((len(X), 1)), np.matrix(X)])
+#    #initialize variables
+#    Nrow = len(X)
+#    Ncol = len(X1[0])
+#
+#    learningRate = .01
+#    lam = .001
         
 
-    for i in range(k):
-        tmp = w[1:Ncol]
-        product = np.dot(X,tmp)
-        #print('product', product)
-        shiftedValue = w[0] + product
-        #print('shiftedValue',shiftedValue)
-        expValue = np.exp(shiftedValue)
-        #print('expValue', expValue)
-        ratio = expValue / (1 + expValue)
-        #print('ratio',ratio)
-        error = Y - ratio
-        #print('error',error)
-        
-        
-        dLnew = np.dot(np.transpose(X1),error)
-        #print('dLnew',dLnew)
-        w = w + learningRate * (-lam*w + dLnew/Nrow)
+    tmp = w[1:Ncol]
+    product = np.dot(X,tmp)
+    #print('product', product)
+    shiftedValue = w[0] + product
+    #print('shiftedValue',shiftedValue)
+    expValue = np.exp(shiftedValue)
+    #print('expValue', expValue)
+    ratio = expValue / (1 + expValue)
+    #print('ratio',ratio)
+    error = Y - ratio
+    #print('error',error)
+    
+    
+    dLnew = np.dot(np.transpose(X1),error)
+    #print('dLnew',dLnew)
+    w = w + learningRate * (-lam*w + dLnew/Nrow)
         
 #        dL = np.sum(dLnew)
 #        print('Dl', dL)
@@ -74,6 +72,34 @@ def Test(w, X, Y):
     results = np.array(Y) - np.array(Ypredict)
     return sum(abs(results))/len(Y)
     
+def Plot(x,y1,y2,title,legendLoc = 1):
+    plt.title(title)
+    plt.plot(x,y1,label = 'Test Error')
+    plt.plot(x,y2,label = 'Training Error')
+    plt.legend(loc = legendLoc)
+    plt.show()
+    
+def TrainWeights(X,Y,Xtest,Ytest,k):
+    X = preprocessing.scale(X)
+    Y = [0 if y <= 0 else 1 for y in np.array(Y)]
+    X1 = np.array(np.c_[np.ones((len(X), 1)), np.matrix(X)])
+    #initialize variables
+    Nrow = len(X)
+    Ncol = len(X1[0])
+
+    learningRate = .01
+    lam = .001
+    
+    w = np.array([0]*(Ncol))
+    
+    y1 = []
+    y2 = []
+    for i in range(k):
+        w = updateWeights(X,X1,Y,w, Ncol,Nrow, learningRate, lam)
+        y1.append(Test(w,Xtest, Ytest))
+        y2.append(Test(w,X,Y))
+        
+    return y1,y2
     
 
 ##Gisette Data
@@ -83,12 +109,6 @@ def Test(w, X, Y):
 #X.drop(X.columns[len(X.columns)-1], axis=1, inplace=True)
 #Xtest.drop(Xtest.columns[len(Xtest.columns)-1], axis=1, inplace=True)  #conner.xyz  at https://stackoverflow.com/questions/20517650/how-to-delete-the-last-column-of-data-of-a-pandas-dataframe
 #
-##Normalize the Data
-#X = preprocessing.scale(X)
-#Xtest = preprocessing.scale(Xtest)
-#
-#
-#
 #w = TrainWeights(X,Y)
 ##print(w)
 
@@ -97,14 +117,10 @@ X, Y, Xtest, Ytest = import_data('arcene', 'arcene_train.data', 'arcene_valid.da
 X.drop(X.columns[len(X.columns)-1], axis=1, inplace=True)
 Xtest.drop(Xtest.columns[len(Xtest.columns)-1], axis=1, inplace=True)
 
+y1, y2 = TrainWeights(X,Y,Xtest,Ytest,30)
 
-
-w = TrainWeights(X,Y,2)
-print(w)
-w = TrainWeights(X,Y,300)
-print(w)
-
-print(Test(w,Xtest, Ytest))
+    
+Plot(range(30), y1, y2, 'Arcene Errors')
 #Plot(K,eTest,eTrain,'Arcene')
 
 #min_table['Arcene      '] = [min(eTest), K[np.argmin(eTest)]]
