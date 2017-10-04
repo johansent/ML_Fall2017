@@ -5,10 +5,15 @@ Created on Thu Sep 28 20:10:58 2017
 @author: joh10
 """
 
-from import_data import import_data
+
 from sklearn import preprocessing
 import matplotlib.pyplot as plt
 import numpy as np
+import os
+import sys
+
+sys.path.append(os.path.abspath('../'))
+from import_data import import_data
 
 def updateWeights(X,X1,Y,w, Ncol,Nrow, learningRate, lam, thresh):
     tmp = w[1:Ncol]
