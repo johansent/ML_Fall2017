@@ -42,14 +42,14 @@ def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
         product = Y[k] * np.dot(w,row)
         #print(np.dot(w,row))
         if(product < 1):
-            divisor = 2 + product*product - 2 * product
+            divisor = 2 + product*product - (2 * product)
             numerator = 2 * (product - 1)
             value = (numerator / divisor) * row * Y[k]
             sumation = sumation + value
         
     #print(type(sumation), type(s), type(w))
-    derivative = sumation + s * w
-    w = w - learningRate * derivative
+    derivative = sumation + (s * w)
+    w = w - (learningRate * derivative)
     #print('w',w)
     
     
@@ -78,13 +78,13 @@ def Test(w, X, Y):
     results = np.array(Y) - np.array(Ypredict)
     return sum(abs(results))/len(Y)
     
-def Plot(x,y1,y2,title,legendLoc = 1):
+def Plot(x,y1,y2,title,legendLoc = 1, labels = ['iteration count', 'Misclassification Error']):
     plt.title(title)
     plt.plot(x,y1,label = 'Test Error')
     plt.plot(x,y2,label = 'Training Error')
     plt.legend(loc = legendLoc)
-    plt.xlabel('iteration count')
-    plt.ylabel('Misclassification Error')
+    plt.xlabel(labels[0])
+    plt.ylabel(labels[1])
     plt.show()
     
 def TrainWeights(X,Y,Xtest,Ytest,niter,k, learnRate = .01):
@@ -101,15 +101,17 @@ def TrainWeights(X,Y,Xtest,Ytest,niter,k, learnRate = .01):
     testErrors = []
     trainingErrors = []
     for i in range(niter):
-        Mi = getMi(Ncol, k, niter, i, u = 100)
+        
         #print('Mi', Mi)
         w = updateWeights(X,Y,w, Ncol,Nrow, learnRate, s)
-        w,X,Xtest,Ncol = getMBest(w, X, Xtest, Mi, Ncol)
+        if Ncol > k:
+            Mi = getMi(Ncol, k, niter, i, u = 100)
+            w,X,Xtest,Ncol = getMBest(w, X, Xtest, Mi, Ncol)
         testErrors.append(Test(w,Xtest, Ytest))
         trainingErrors.append(Test(w,X,Y))
         
-        if i < 50:
-            print(np.shape(X))
+        #if i == 450 or i == 451 or i == 452:
+            #print(w)
         #print(testErrors)
         
     return testErrors,trainingErrors
@@ -129,20 +131,20 @@ def getMBest(w, X, Xtest, M, Ncol):
 
 
 ### Script
-import timeit
-start = timeit.default_timer()
-min_table = {}
-
-#Gisette Data
-    
-#Read in the Data
-X, Y, Xtest, Ytest = import_data('gisette', 'gisette_train.data', 'gisette_valid.data','gisette_train.labels', 'gisette_valid.labels', head = None, norm = True, removeCol = True)
-
-niter = 500
-y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter,10,.1)
-
-Plot(range(niter), y1, y2, 'Gisette Errors')
-min_table['Gisette'] = [min(y1), min(y2)]
+#import timeit
+#start = timeit.default_timer()
+#min_table = {}
+#
+##Gisette Data
+#    
+##Read in the Data
+#X, Y, Xtest, Ytest = import_data('gisette', 'gisette_train.data', 'gisette_valid.data','gisette_train.labels', 'gisette_valid.labels', head = None, norm = True, removeCol = True)
+#
+#niter = 500
+#y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter,100,.001)
+#
+#Plot(range(niter), y1, y2, 'Gisette Errors')
+#min_table['Gisette'] = [min(y1), min(y2)]
 
 #
 ##Arcene Test
@@ -159,30 +161,30 @@ min_table['Gisette'] = [min(y1), min(y2)]
 #X, Y, Xtest, Ytest = import_data('madelon', 'madelon_train.data', 'madelon_valid.data','madelon_train.labels', 'madelon_valid.labels', head = None, norm = True, removeCol = True)
 #
 #niter = 500
-#y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter, 100, .001)
+#y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter, 10, .001)
 #
 #Plot(range(niter), y1, y2, 'Madelon Errors', 3)
 #min_table['Madelon'] = [min(y1), min(y2)]
 
 #
 ## Hill/Valley
-#X, Y, Xtest, Ytest = import_data('hill_valley', 'X.dat', 'Xtest.dat','Y.dat', 'Ytest.dat', head = None)
+#X, Y, Xtest, Ytest = import_data('hill_valley', 'X.dat', 'Xtest.dat','Y.dat', 'Ytest.dat', head = None, norm = True)
 #
-#niter = 3000
-#y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter)
+#niter = 50
+#y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter, 10, .01)
 #
 #Plot(range(niter), y1, y2, 'Hill/Valley Errors', 3)
 #min_table['Hill/Valley'] = [min(y1), min(y2)]
 
 
-#Summary Of Results
-print('{0:17s} {1:12s} {2:12s}'.format('Data name', 'Test Error', 'Training Error'))
-print('---------------------------------------')
-for k in min_table.keys():
-    print('{0:12s} {1:13f} {2:12f}'.format(k, min_table[k][0], min_table[k][1]))
-    
-stop = timeit.default_timer()
-print(stop - start)
+##Summary Of Results
+#print('{0:17s} {1:12s} {2:12s}'.format('Data name', 'Test Error', 'Training Error'))
+#print('---------------------------------------')
+#for k in min_table.keys():
+#    print('{0:12s} {1:13f} {2:12f}'.format(k, min_table[k][0], min_table[k][1]))
+#    
+#stop = timeit.default_timer()
+#print(stop - start)
 
      
      
