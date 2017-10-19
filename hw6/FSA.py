@@ -44,7 +44,7 @@ def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
         if(product < 1):
             divisor = 2 + product*product - 2 * product
             numerator = 2 * (product - 1)
-            value = (numerator / divisor) * row
+            value = (numerator / divisor) * row * Y[k]
             sumation = sumation + value
         
     #print(type(sumation), type(s), type(w))
@@ -107,6 +107,9 @@ def TrainWeights(X,Y,Xtest,Ytest,niter,k, learnRate = .01):
         w,X,Xtest,Ncol = getMBest(w, X, Xtest, Mi, Ncol)
         testErrors.append(Test(w,Xtest, Ytest))
         trainingErrors.append(Test(w,X,Y))
+        
+        if i < 50:
+            print(np.shape(X))
         #print(testErrors)
         
     return testErrors,trainingErrors
@@ -120,6 +123,7 @@ def getMBest(w, X, Xtest, M, Ncol):
     w = np.array([w[i] for i in best])
     X.drop(X.columns[worst], axis=1, inplace=True)
     Xtest.drop(Xtest.columns[worst], axis=1, inplace=True)
+    #print(np.shape(X))
     return w, X, Xtest, len(X.columns)
     
 
@@ -134,7 +138,7 @@ min_table = {}
 #Read in the Data
 X, Y, Xtest, Ytest = import_data('gisette', 'gisette_train.data', 'gisette_valid.data','gisette_train.labels', 'gisette_valid.labels', head = None, norm = True, removeCol = True)
 
-niter = 100
+niter = 500
 y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter,10,.1)
 
 Plot(range(niter), y1, y2, 'Gisette Errors')
@@ -145,7 +149,7 @@ min_table['Gisette'] = [min(y1), min(y2)]
 #X, Y, Xtest, Ytest = import_data('arcene', 'arcene_train.data', 'arcene_valid.data','arcene_train.labels', 'arcene_valid.labels', head = None, norm = True, removeCol = True)
 #
 #niter = 500
-#y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter,100, .001)    
+#y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter,20, .001)    
 #
 #Plot(range(niter), y1, y2, 'Arcene Errors')
 ##Plot(K,eTest,eTrain,'Arcene')
