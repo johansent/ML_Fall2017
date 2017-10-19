@@ -47,7 +47,7 @@ def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
             value = (numerator / divisor) * row
             sumation = sumation + value
         
-    print(type(sumation), type(s), type(w))
+    #print(type(sumation), type(s), type(w))
     derivative = sumation + s * w
     w = w - learningRate * derivative
     #print('w',w)
@@ -102,12 +102,12 @@ def TrainWeights(X,Y,Xtest,Ytest,niter,k, learnRate = .01):
     trainingErrors = []
     for i in range(niter):
         Mi = getMi(Ncol, k, niter, i, u = 100)
-        print('Mi', Mi)
+        #print('Mi', Mi)
         w = updateWeights(X,Y,w, Ncol,Nrow, learnRate, s)
         w,X,Xtest,Ncol = getMBest(w, X, Xtest, Mi, Ncol)
         testErrors.append(Test(w,Xtest, Ytest))
         trainingErrors.append(Test(w,X,Y))
-        print(testErrors)
+        #print(testErrors)
         
     return testErrors,trainingErrors
 
@@ -129,41 +129,37 @@ import timeit
 start = timeit.default_timer()
 min_table = {}
 
-##Gisette Data
-#    
-##Read in the Data
-#X, Y, Xtest, Ytest = import_data('gisette', 'gisette_train.data', 'gisette_valid.data','gisette_train.labels', 'gisette_valid.labels', head = None)
-#X.drop(X.columns[len(X.columns)-1], axis=1, inplace=True)
-#Xtest.drop(Xtest.columns[len(Xtest.columns)-1], axis=1, inplace=True)  #conner.xyz  at https://stackoverflow.com/questions/20517650/how-to-delete-the-last-column-of-data-of-a-pandas-dataframe
-#
-#niter = 50
-#y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter,.1)
-#
-#Plot(range(niter), y1, y2, 'Gisette Errors')
-#min_table['Gisette'] = [min(y1), min(y2)]
-#
-#
-#Arcene Test
-X, Y, Xtest, Ytest = import_data('arcene', 'arcene_train.data', 'arcene_valid.data','arcene_train.labels', 'arcene_valid.labels', head = None, norm = True, removeCol = True)
+#Gisette Data
+    
+#Read in the Data
+X, Y, Xtest, Ytest = import_data('gisette', 'gisette_train.data', 'gisette_valid.data','gisette_train.labels', 'gisette_valid.labels', head = None, norm = True, removeCol = True)
 
-niter = 500
-y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter,100, .001)    
+niter = 100
+y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter,10,.1)
 
-Plot(range(niter), y1, y2, 'Arcene Errors')
-#Plot(K,eTest,eTrain,'Arcene')
-min_table['Arcene'] = [min(y1), min(y2)]
+Plot(range(niter), y1, y2, 'Gisette Errors')
+min_table['Gisette'] = [min(y1), min(y2)]
 
-## Madelon
-#X, Y, Xtest, Ytest = import_data('madelon', 'madelon_train.data', 'madelon_valid.data','madelon_train.labels', 'madelon_valid.labels', head = None)
-#X.drop(X.columns[len(X.columns)-1], axis=1, inplace=True)
-#Xtest.drop(Xtest.columns[len(Xtest.columns)-1], axis=1, inplace=True)
+#
+##Arcene Test
+#X, Y, Xtest, Ytest = import_data('arcene', 'arcene_train.data', 'arcene_valid.data','arcene_train.labels', 'arcene_valid.labels', head = None, norm = True, removeCol = True)
 #
 #niter = 500
-#y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter)
+#y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter,100, .001)    
+#
+#Plot(range(niter), y1, y2, 'Arcene Errors')
+##Plot(K,eTest,eTrain,'Arcene')
+#min_table['Arcene'] = [min(y1), min(y2)]
+
+## Madelon
+#X, Y, Xtest, Ytest = import_data('madelon', 'madelon_train.data', 'madelon_valid.data','madelon_train.labels', 'madelon_valid.labels', head = None, norm = True, removeCol = True)
+#
+#niter = 500
+#y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter, 100, .001)
 #
 #Plot(range(niter), y1, y2, 'Madelon Errors', 3)
 #min_table['Madelon'] = [min(y1), min(y2)]
-#
+
 #
 ## Hill/Valley
 #X, Y, Xtest, Ytest = import_data('hill_valley', 'X.dat', 'Xtest.dat','Y.dat', 'Ytest.dat', head = None)

@@ -30,7 +30,7 @@ def updateWeights(X,X1,Y,w, Ncol,Nrow, learningRate, lam, thresh):
 
 def Test(w, X, Y):
     #nomralize data
-    X = preprocessing.scale(X)
+    #X = preprocessing.scale(X)
     #Add column of 1s
     X = np.array(np.c_[np.ones((len(X), 1)), np.matrix(X)])
     Y = [0 if y <= 0 else 1 for y in np.array(Y)]
@@ -49,7 +49,7 @@ def Plot(x,y1,y2,title,legendLoc = 1):
     plt.show()
     
 def TrainWeights(X,Y,Xtest,Ytest,k, learnRate = .01, thresh = .001):
-    X = preprocessing.scale(X)
+    #X = preprocessing.scale(X)
     Y = [0 if y <= 0 else 1 for y in np.array(Y)]
     X1 = np.array(np.c_[np.ones((len(X), 1)), np.matrix(X)])
     #initialize variables
@@ -96,21 +96,21 @@ min_table = {}
 ## guess and check to get the numbers for the plot below
 #Plot([11, 31, 101, 299], [.144, .133, .084, .026], [.1317, .126, .0735, .0313], 'Gisette Errors', 3)
 
-##Arcene Test
-##10 (10, 0.00021) {'Arcene': [0.34000000000000002, 0.31]}
-##30 (23, 0.0002) {'Arcene': [0.31, 0.26000000000000001]}
-##100 (92, 0.00018) {'Arcene': [0.27000000000000002, 0.27000000000000002]}
-##300 (308, 0.000163) {'Arcene': [0.28999999999999998, 0.34000000000000002]}
-#X, Y, Xtest, Ytest = import_data('arcene', 'arcene_train.data', 'arcene_valid.data','arcene_train.labels', 'arcene_valid.labels', head = None)
+#Arcene Test
+#10 (10, 0.00021) {'Arcene': [0.34000000000000002, 0.31]}
+#30 (23, 0.0002) {'Arcene': [0.31, 0.26000000000000001]}
+#100 (92, 0.00018) {'Arcene': [0.27000000000000002, 0.27000000000000002]}
+#300 (308, 0.000163) {'Arcene': [0.28999999999999998, 0.34000000000000002]}
+X, Y, Xtest, Ytest = import_data('arcene', 'arcene_train.data', 'arcene_valid.data','arcene_train.labels', 'arcene_valid.labels', head = None, removeCol = True, norm = True)
 #X.drop(X.columns[len(X.columns)-1], axis=1, inplace=True)
 #Xtest.drop(Xtest.columns[len(Xtest.columns)-1], axis=1, inplace=True)
-#
-#niter = 100
-#y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter, .001, .000163)    
-#
-#Plot(range(niter), y1, y2, 'Arcene Errors')
+
+niter = 100
+y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter, .001, .0001)    
+
+Plot(range(niter), y1, y2, 'Arcene Errors')
 ##Plot(K,eTest,eTrain,'Arcene')
-#min_table['Arcene'] = [min(y1), min(y2)]
+min_table['Arcene'] = [min(y1), min(y2)]
 
 
 ## Hill/Valley
@@ -142,8 +142,8 @@ min_table = {}
 #
 #Plot(range(niter), y1, y2, 'Madelon Errors', 2)
 #min_table['Madelon'] = [min(y1), min(y2)]
-#print(min_table)
+print(min_table)
 
-Plot([14, 35, 108, 300], [.144, .133, .084, .026], [.1317, .126, .0735, .0313], 'Gisette Errors', 3)
-Plot([10, 23, 92, 308], [.34, .31, .27, .29], [.31, .26, .27, .34], 'Arcene Errors', 2)
-Plot([11, 31, 101, 299], [.41, .405, .403333333, .415], [.405, .383, .364, .3485], 'Madelon Errors', 3)
+#Plot([14, 35, 108, 300], [.144, .133, .084, .026], [.1317, .126, .0735, .0313], 'Gisette Errors', 3)
+#Plot([10, 23, 92, 308], [.34, .31, .27, .29], [.31, .26, .27, .34], 'Arcene Errors', 2)
+#Plot([11, 31, 101, 299], [.41, .405, .403333333, .415], [.405, .383, .364, .3485], 'Madelon Errors', 3)

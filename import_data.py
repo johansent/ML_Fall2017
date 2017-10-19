@@ -29,6 +29,7 @@ def import_data(path, train1, test1, train2 = None, test2 = None, removeCol = Fa
         ## separate test data, if not already
         
     if removeCol:
+        #conner.xyz  at https://stackoverflow.com/questions/20517650/how-to-delete-the-last-column-of-data-of-a-pandas-dataframe
         train_data.drop(train_data.columns[len(train_data.columns)-1], axis=1, inplace=True)
         test_data.drop(test_data.columns[len(test_data.columns)-1], axis=1, inplace=True)
         
