@@ -22,12 +22,12 @@ def Analysis(X,Y,Xtest,Ytest,learnRate, name, min_table):
     trainErrors = []
     K = [10,30,100,300]
     for k in K:
-        y1, y2 = FSA.TrainWeights(X,Y,Xtest,Ytest,niter,k,learnRate)
+        y1, y2, loss = FSA.TrainWeights(X,Y,Xtest,Ytest,niter,k,learnRate)
         testErrors.append(y1[-1])
         trainErrors.append(y2[-1])
     
         if k == 10:
-            FSA.Plot(range(niter), y1, y2, name + ' Errors At k = 10')
+            FSA.Plot(range(niter), loss, None, title = name + ' Loss At k = 10', labels = ['iteration count', 'Loss'])
         min_table[name + ' ' + str(k)] = [y1[-1], y2[-1]]
     
     FSA.Plot(K, testErrors, trainErrors, name + ' min Errors at k', labels = ['k','Misclassification Error'])
@@ -43,8 +43,8 @@ min_table = {}
 ##Gisette Data
 #    
 ##Read in the Data
-#X, Y, Xtest, Ytest = import_data('gisette', 'gisette_train.data', 'gisette_valid.data','gisette_train.labels', 'gisette_valid.labels', head = None, norm = True, removeCol = True)
-#min_table = Analysis(X,Y,Xtest,Ytest,.0001, 'Gisette', min_table)
+X, Y, Xtest, Ytest = import_data('gisette', 'gisette_train.data', 'gisette_valid.data','gisette_train.labels', 'gisette_valid.labels', head = None, norm = True, removeCol = True)
+min_table = Analysis(X,Y,Xtest,Ytest,.0001, 'Gisette', min_table)
 #
 #niter = 500
 #testErrors = []
@@ -63,9 +63,9 @@ min_table = {}
 
 
 #Arcene Test
-X, Y, Xtest, Ytest = import_data('arcene', 'arcene_train.data', 'arcene_valid.data','arcene_train.labels', 'arcene_valid.labels', head = None, norm = True, removeCol = True)
-
-min_table = Analysis(X,Y,Xtest,Ytest,.0001, 'Arcene', min_table)
+#X, Y, Xtest, Ytest = import_data('arcene', 'arcene_train.data', 'arcene_valid.data','arcene_train.labels', 'arcene_valid.labels', head = None, norm = True, removeCol = True)
+#
+#min_table = Analysis(X,Y,Xtest,Ytest,.01, 'Arcene', min_table)
 
 
 #niter = 500
@@ -76,8 +76,8 @@ min_table = Analysis(X,Y,Xtest,Ytest,.0001, 'Arcene', min_table)
 #min_table['Arcene'] = [min(y1), min(y2)]
 
 ## Madelon
-X, Y, Xtest, Ytest = import_data('madelon', 'madelon_train.data', 'madelon_valid.data','madelon_train.labels', 'madelon_valid.labels', head = None, norm = True, removeCol = True)
-min_table = Analysis(X,Y,Xtest,Ytest,.0001, 'Madelon', min_table)
+#X, Y, Xtest, Ytest = import_data('madelon', 'madelon_train.data', 'madelon_valid.data','madelon_train.labels', 'madelon_valid.labels', head = None, norm = True, removeCol = True)
+#min_table = Analysis(X,Y,Xtest,Ytest,.0001, 'Madelon', min_table)
 #
 #niter = 500
 #y1, y2 = TrainWeights(X,Y,Xtest,Ytest,niter, 10, .001)

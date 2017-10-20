@@ -31,6 +31,7 @@ def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
 #    Value = 2 * product * X 
 
     sumation = [0] * Ncol
+    lorenz = []
     #print(sum(X))
     for k, Row in X.iterrows():
         row = np.array(Row)
@@ -41,21 +42,27 @@ def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
         #print(sum(w), sum(row))
         product = Y[k] * np.dot(w,row)
         #print(np.dot(w,row))
-        if(product < 1):
+        if(product <= 1):
             divisor = 2 + product*product - (2 * product)
             numerator = 2 * (product - 1)
             value = (numerator / divisor) * row * Y[k]
             sumation = sumation + value
+            
+            lorenz.append(np.log(1 + (product - 1)**2))
+        else:
+            lorenz.append(0)
+        
         
     #print(type(sumation), type(s), type(w))
     derivative = sumation + (s * w)
     w = w - (learningRate * derivative)
+    loss = -(sum(lorenz) + s * np.dot(w, w))
     #print('w',w)
     
     
 
     
-    return w
+    return w, loss
     
         
     
@@ -80,9 +87,12 @@ def Test(w, X, Y):
     
 def Plot(x,y1,y2,title,legendLoc = 1, labels = ['iteration count', 'Misclassification Error']):
     plt.title(title)
-    plt.plot(x,y1,label = 'Test Error')
-    plt.plot(x,y2,label = 'Training Error')
-    plt.legend(loc = legendLoc)
+    if y2 == None:
+        plt.plot(x,y1)
+    else:
+        plt.plot(x,y1,label = 'Test Error')
+        plt.plot(x,y2,label = 'Training Error')
+        plt.legend(loc = legendLoc)
     plt.xlabel(labels[0])
     plt.ylabel(labels[1])
     plt.show()
@@ -98,12 +108,14 @@ def TrainWeights(X,Y,Xtest,Ytest,niter,k, learnRate = .01):
     
     w = np.array([0]*(Ncol))
     
+    loss = []
     testErrors = []
     trainingErrors = []
     for i in range(niter):
         
         #print('Mi', Mi)
-        w = updateWeights(X,Y,w, Ncol,Nrow, learnRate, s)
+        w, newloss = updateWeights(X,Y,w, Ncol,Nrow, learnRate, s)
+        loss.append(newloss)
         if Ncol > k:
             Mi = getMi(Ncol, k, niter, i, u = 100)
             w,X,Xtest,Ncol = getMBest(w, X, Xtest, Mi, Ncol)
@@ -114,7 +126,7 @@ def TrainWeights(X,Y,Xtest,Ytest,niter,k, learnRate = .01):
             #print(w)
         #print(testErrors)
         
-    return testErrors,trainingErrors
+    return testErrors,trainingErrors, loss
 
 def getMi(M, k, N, i, u = 100):
     return round(k + (M - k) * max([0,(N - 2 * i)/(2 * i * u + N)]))
