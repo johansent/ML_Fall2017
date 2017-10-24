@@ -21,30 +21,30 @@ def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
     lorenz = []
     for k, Row in X.iterrows():
         row = np.array(Row)
-		product_y = np.dot(w[Y[k]],row)
-		sumj = []
-		for j in range(len(w[0])):
-			vec = [0] * Ncol #stays zero unless y != j and prod <= 0
-			if Y[k] != j:
-				product_j = np.dot(w[j],row)
-				prod = product_y - product_j - 1
-				if prod <= 0:
-					vec = - (2 * prod / (1 + prod*prod)) * row
-			sumj.append(vec)
+        product_y = np.dot(w[Y[k]],row)
+        sumj = []
+        for j in range(len(w[0])):
+            vec = [0] * Ncol #stays zero unless y != j and prod <= 0
+            if Y[k] != j:
+                product_j = np.dot(w[j],row)
+                prod = product_y - product_j - 1
+                if prod <= 0:
+                    vec = - (2 * prod / (1 + prod*prod)) * row
+            sumj.append(vec)
 	
-		if k == 0:
-			summation = sumj
-		else:
-			summation = summation + sumj
-		#summation = (k > 0)*summation + sumj # summation is sumj on first iteration
+        if k == 0:
+            summation = sumj
+        else:
+            summation = summation + sumj
+            #summation = (k > 0)*summation + sumj # summation is sumj on first iteration
 
 			
-			#lorenz.append(np.log(1 + (product - 1)**2))
-		#else:
-			#lorenz.append(0)
+            #lorenz.append(np.log(1 + (product - 1)**2))
+            #else:
+            #lorenz.append(0)
         
-	derivative = summation + (s * w)
-	w = w - (learningRate * derivative)    
+        derivative = summation + (s * w)
+        w = w - (learningRate * derivative)    
     
     #loss = -(sum(lorenz) + s * np.dot(w, w))
     

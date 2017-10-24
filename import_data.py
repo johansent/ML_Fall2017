@@ -8,36 +8,52 @@ import pandas
 import numpy as np
 import os
 
-def import_data(path, train1, test1, train2 = None, test2 = None, removeCol = False, head = 0, norm = False):
+#'X.dat', 'Xtest.dat', 'Y.dat', 'Ytest.dat'
+def import_data(path, train_data, test_data = None, train_labels = None, test_labels = None, removeCol = False, head = 0, norm = False, sep = ' ', testIndex = 0):
     #filepath = 'C:/Users/joh10/Desktop/FSU/FA17/5635/git/Data/' + path + '/'
     filepath = os.pardir + '\\Data\\' + path + '\\'
     
 ### NOTE: add header, otherwise we miss first row    
-    train_data = pandas.read_table(filepath + train1, sep = ' ', header = head)
-    if train2 != None:
-        train2_data = pandas.read_table(filepath + train2, sep = ' ', header = head)
-    #else:
+    X = pandas.read_table(filepath + train_data, sep = sep, header = head)
+    print(X.shape)
+    if train_labels != None:
+        Y = pandas.read_table(filepath + train_labels, sep = sep, header = head)
+    else:
         # separate training data, if not already
+        Y = X.loc[:,len(X.columns)-1]
+        X.drop(X.columns[len(X.columns)-1], axis=1, inplace=True)
         
         
 
+    if test_data != None:
+        Xtest = pandas.read_table(filepath + test_data, sep = sep, header = head)
+        if test_labels != None:
+            Ytest = pandas.read_table(filepath + test_labels, sep = sep, header = head)
+        else:
+            # separate test data, if not already
+            Ytest = Xtest.loc[:,len(Xtest.columns)-1]
+            Xtest.drop(Xtest.columns[len(Xtest.columns)-1], axis=1, inplace=True)
+    else:
+        #take part of the training and put it in the testing
+        Xtest = X[testIndex:X.shape[0]]
+        X = X[0:testIndex]
+        Ytest = Y[testIndex:Y.shape[0]]
+        Y = Y[0:testIndex]
+        
+        
+        
     
-    test_data = pandas.read_table(filepath + test1, sep = ' ', header = head)
-    if test2 != None:
-        test2_data = pandas.read_table(filepath + test2, sep = ' ', header = head)
-    #else:
-        ## separate test data, if not already
         
     if removeCol:
         #conner.xyz  at https://stackoverflow.com/questions/20517650/how-to-delete-the-last-column-of-data-of-a-pandas-dataframe
-        train_data.drop(train_data.columns[len(train_data.columns)-1], axis=1, inplace=True)
-        test_data.drop(test_data.columns[len(test_data.columns)-1], axis=1, inplace=True)
+        X.drop(X.columns[len(X.columns)-1], axis=1, inplace=True)
+        Xtest.drop(Xtest.columns[len(Xtest.columns)-1], axis=1, inplace=True)
         
     if normalize:
-        train_data, test_data = normalize(train_data, test_data)
+        X, Xtest = normalize(X, Xtest)
         
 
-    return train_data, train2_data, test_data, test2_data
+    return X, Y, Xtest, Ytest
     
 def normalize(X, Xtest):
     npX = np.array(X)
