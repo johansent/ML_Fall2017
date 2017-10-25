@@ -15,7 +15,6 @@ def import_data(path, train_data, test_data = None, train_labels = None, test_la
     
 ### NOTE: add header, otherwise we miss first row    
     X = pandas.read_table(filepath + train_data, sep = sep, header = head)
-    print(X.shape)
     if train_labels != None:
         Y = pandas.read_table(filepath + train_labels, sep = sep, header = head)
     else:

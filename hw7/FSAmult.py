@@ -64,11 +64,16 @@ def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
 #    return w
 
 def Test(w, X, Y):
-    Y = [0 if y <= 0 else 1 for y in np.array(Y)]
-    wx = np.dot(X,w)
-    Ypredict = [0 if x < 0 else 1 for x in wx]
-    results = np.array(Y) - np.array(Ypredict)
-    return sum(abs(results))/len(Y)
+    #Y = [0 if y <= 0 else 1 for y in np.array(Y)]
+    y = np.array(Y)
+    wx = np.dot(X,np.transpose(w))
+    Ypredict = [np.argmax(x) for x in wx]
+    #print('ypred', np.shape(np.array(Ypredict)))
+    #print('y', np.shape(np.array(Y)))
+    results = [y[i][0] - Ypredict[i] for i in range(len(Ypredict))] #np.array(Y) - Ypredict
+    #print('results', np.shape(results))
+    results = np.array([1 if x != 0 else 0 for x in results])
+    return sum(abs(results))/len(Ypredict)
     
 def Plot(x,y1,y2,title,legendLoc = 1, labels = ['iteration count', 'Misclassification Error']):
     plt.title(title)
@@ -106,15 +111,18 @@ def TrainWeights(X,Y,Xtest,Ytest,niter,k, learnRate = .01):
         testErrors.append(Test(w,Xtest, Ytest))
         trainingErrors.append(Test(w,X,Y))
         
+        if(i % 10 == 0):
+            print('i', i)
+        
     return testErrors,trainingErrors, loss
 
 def getMi(M, k, N, i, u = 100):
     return round(k + (M - k) * max([0,(N - 2 * i)/(2 * i * u + N)]))
     
 def getMBest(w, X, Xtest, M, Ncol):
-    print(type(w))
+    #print(type(w))
     summation = sum(w)
-    print(len(summation))
+    #print(len(summation))
     best = sorted(range(len(summation)), key=lambda i: summation[i])[-M:]
     worst = sorted(range(len(summation)), key = lambda i: summation[i])[0:(Ncol - M)]
     w = np.array([[x[i] for i in best] for x in w])

@@ -17,16 +17,18 @@ from import_data import import_data
 
 
 def Analysis(X,Y,Xtest,Ytest,learnRate, name, min_table):
-    niter = 500
+    niter = 100
     testErrors = []
     trainErrors = []
-    K = [5,9,18,27,36]
+    K = [5]#,9,18,27,36]
     for k in K:
+        print(k)
         y1, y2, loss = FSAmult.TrainWeights(X,Y,Xtest,Ytest,niter,k,learnRate)
         testErrors.append(y1[-1])
         trainErrors.append(y2[-1])
+        
     
-        if k == 10:
+        if k == 9:
             FSAmult.Plot(range(niter), loss, None, title = name + ' Loss At k = 10', labels = ['iteration count', 'Loss'])
         min_table[name + ' ' + str(k)] = [y1[-1], y2[-1]]
     
