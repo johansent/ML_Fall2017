@@ -16,24 +16,26 @@ sys.path.append(os.path.abspath('../'))
 from import_data import import_data
 
 def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
-
-    summation = []
-    lorenz = []
+    y = np.array(Y)
+    L = len(w)
+    summation = [] #np.array([[0]*(Ncol)]*L)
+    lorenz = 0
     for k, Row in X.iterrows():
         row = np.array(Row)
-        product_y = np.dot(w[Y[k]],row)
+        product_y = np.dot(w[y[k]],row)
         sumj = []
-        for j in range(len(w[0])):
+        for j in range(L):
             vec = [0] * Ncol #stays zero unless y != j and prod <= 0
-            if Y[k] != j:
+            if y[k] != j:
                 product_j = np.dot(w[j],row)
                 prod = product_y - product_j - 1
                 if prod <= 0:
                     vec = - (2 * prod / (1 + prod*prod)) * row
+                    lorenz += np.log(1 + (prod - 1)**2)
             sumj.append(vec)
 	
         if k == 0:
-            summation = sumj
+            summation = np.array(sumj)
         else:
             summation = summation + sumj
             #summation = (k > 0)*summation + sumj # summation is sumj on first iteration
@@ -46,7 +48,7 @@ def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
         derivative = summation + (s * w)
         w = w - (learningRate * derivative)    
     
-    #loss = -(sum(lorenz) + s * np.dot(w, w))
+    loss = -(lorenz + L* s * np.linalg.norm(w, 'fro'))
     
     return w, loss
     
@@ -81,13 +83,14 @@ def Plot(x,y1,y2,title,legendLoc = 1, labels = ['iteration count', 'Misclassific
     plt.show()
     
 def TrainWeights(X,Y,Xtest,Ytest,niter,k, learnRate = .01):
-    Y = [-1 if y <= 0 else 1 for y in np.array(Y)]
+    #Y = [-1 if y <= 0 else 1 for y in np.array(Y)]
     Nrow = len(X)
     Ncol = len(X.columns)
+    L = 7
 
     s = .001
     
-    w = np.array([0]*(Ncol))
+    w = np.array([[0]*(Ncol)]*L)
     
     loss = []
     testErrors = []
@@ -109,9 +112,12 @@ def getMi(M, k, N, i, u = 100):
     return round(k + (M - k) * max([0,(N - 2 * i)/(2 * i * u + N)]))
     
 def getMBest(w, X, Xtest, M, Ncol):
-    best = sorted(range(len(w)), key=lambda i: w[i])[-M:]
-    worst = sorted(range(len(w)), key = lambda i: w[i])[0:(Ncol - M)]
-    w = np.array([w[i] for i in best])
+    print(type(w))
+    summation = sum(w)
+    print(len(summation))
+    best = sorted(range(len(summation)), key=lambda i: summation[i])[-M:]
+    worst = sorted(range(len(summation)), key = lambda i: summation[i])[0:(Ncol - M)]
+    w = np.array([[x[i] for i in best] for x in w])
     X.drop(X.columns[worst], axis=1, inplace=True)
     Xtest.drop(Xtest.columns[worst], axis=1, inplace=True)
     #print(np.shape(X))
