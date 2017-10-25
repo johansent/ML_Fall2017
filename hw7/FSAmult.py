@@ -16,28 +16,34 @@ sys.path.append(os.path.abspath('../'))
 from import_data import import_data
 
 def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
-    y = np.array(Y)
+    #y = np.array(Y)
     L = len(w)
-    summation = [] #np.array([[0]*(Ncol)]*L)
+    summation = np.array([[0]*(Ncol)]*L)
     lorenz = 0
-    for k, Row in X.iterrows():
-        row = np.array(Row)
-        product_y = np.dot(w[y[k]],row)
-        sumj = []
+    X = np.array(X)
+    product_Y = np.dot(X, np.transpose(w))
+    #print('pY,', product_Y)
+    for k in range(Nrow):
+        #row = np.array(Row)
+        product_y = product_Y[k][Y[k]]#np.dot(w[Y[k]],row)
+        #sumj = []
         for j in range(L):
-            vec = [0] * Ncol #stays zero unless y != j and prod <= 0
-            if y[k] != j:
-                product_j = np.dot(w[j],row)
+            #vec = [0] * Ncol #stays zero unless y != j and prod <= 0
+            if Y[k] != j:
+                product_j = product_Y[k][j]#np.dot(w[j],row)
                 prod = product_y - product_j - 1
+                #print('prod',np.shape(prod))
+                #print('py', product_y)
                 if prod <= 0:
-                    vec = - (2 * prod / (1 + prod*prod)) * row
+                    #print(summation[j], - (2 * prod / (1 + prod*prod)) * X[k])
+                    summation[j] = summation[j] - (2 * prod / (1 + prod*prod)) * X[k]#row
                     lorenz += np.log(1 + (prod - 1)**2)
-            sumj.append(vec)
+            #sumj.append(vec)
 	
-        if k == 0:
-            summation = np.array(sumj)
-        else:
-            summation = summation + sumj
+#        if k == 0:
+#            summation = np.array(sumj)
+#        else:
+        #summation = summation + sumj
             #summation = (k > 0)*summation + sumj # summation is sumj on first iteration
 
 			
@@ -48,7 +54,7 @@ def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
         derivative = summation + (s * w)
         w = w - (learningRate * derivative)    
     
-    loss = -(lorenz + L* s * np.linalg.norm(w, 'fro'))
+    loss = (lorenz + L* s * np.linalg.norm(w, 'fro'))
     
     return w, loss
     
@@ -65,15 +71,16 @@ def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
 
 def Test(w, X, Y):
     #Y = [0 if y <= 0 else 1 for y in np.array(Y)]
-    y = np.array(Y)
+    #y = np.array(Y)
     wx = np.dot(X,np.transpose(w))
     Ypredict = [np.argmax(x) for x in wx]
     #print('ypred', np.shape(np.array(Ypredict)))
     #print('y', np.shape(np.array(Y)))
-    results = [y[i][0] - Ypredict[i] for i in range(len(Ypredict))] #np.array(Y) - Ypredict
+    #results = [y[i][0] - Ypredict[i] for i in range(len(Ypredict))] #np.array(Y) - Ypredict
+    results = Y - np.array(Ypredict)
     #print('results', np.shape(results))
     results = np.array([1 if x != 0 else 0 for x in results])
-    return sum(abs(results))/len(Ypredict)
+    return sum(results)/len(Ypredict)
     
 def Plot(x,y1,y2,title,legendLoc = 1, labels = ['iteration count', 'Misclassification Error']):
     plt.title(title)
@@ -92,6 +99,9 @@ def TrainWeights(X,Y,Xtest,Ytest,niter,k, learnRate = .01):
     Nrow = len(X)
     Ncol = len(X.columns)
     L = 7
+    Y = np.array([y for y in Y[0]])
+    Ytest = np.array([y for y in Ytest[0]])
+    #print(np.shape(Y))
 
     s = .001
     
@@ -111,7 +121,7 @@ def TrainWeights(X,Y,Xtest,Ytest,niter,k, learnRate = .01):
         testErrors.append(Test(w,Xtest, Ytest))
         trainingErrors.append(Test(w,X,Y))
         
-        if(i % 10 == 0):
+        if(i % 50 == 0):
             print('i', i)
         
     return testErrors,trainingErrors, loss

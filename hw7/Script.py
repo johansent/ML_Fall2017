@@ -20,7 +20,7 @@ def Analysis(X,Y,Xtest,Ytest,learnRate, name, min_table):
     niter = 100
     testErrors = []
     trainErrors = []
-    K = [5]#,9,18,27,36]
+    K = [5,9]#,18,27,36]
     for k in K:
         print(k)
         y1, y2, loss = FSAmult.TrainWeights(X,Y,Xtest,Ytest,niter,k,learnRate)
@@ -29,7 +29,7 @@ def Analysis(X,Y,Xtest,Ytest,learnRate, name, min_table):
         
     
         if k == 9:
-            FSAmult.Plot(range(niter), loss, None, title = name + ' Loss At k = 10', labels = ['iteration count', 'Loss'])
+            FSAmult.Plot(range(niter), loss, None, title = name + ' Loss At k = ' + str(k), labels = ['iteration count', 'Loss'])
         min_table[name + ' ' + str(k)] = [y1[-1], y2[-1]]
     
     FSAmult.Plot(K, testErrors, trainErrors, name + ' min Errors at k', labels = ['k','Misclassification Error'])
