@@ -102,6 +102,8 @@ def TrainWeights(X,Y,Xtest,Ytest,niter,k, learnRate = .01):
     Y = np.array([y for y in Y[0]])
     Ytest = np.array([y for y in Ytest[0]])
     #print(np.shape(Y))
+    X1 = X.copy()
+    Xtest1 = Xtest.copy()
 
     s = .001
     
@@ -113,13 +115,13 @@ def TrainWeights(X,Y,Xtest,Ytest,niter,k, learnRate = .01):
     for i in range(niter):
         
         #print('Mi', Mi)
-        w, newloss = updateWeights(X,Y,w, Ncol,Nrow, learnRate, s)
+        w, newloss = updateWeights(X1,Y,w, Ncol,Nrow, learnRate, s)
         loss.append(newloss)
         if Ncol > k:
             Mi = getMi(Ncol, k, niter, i, u = 100)
-            w,X,Xtest,Ncol = getMBest(w, X, Xtest, Mi, Ncol)
-        testErrors.append(Test(w,Xtest, Ytest))
-        trainingErrors.append(Test(w,X,Y))
+            w,X,Xtest,Ncol = getMBest(w, X1, Xtest1, Mi, Ncol)
+        testErrors.append(Test(w,Xtest1, Ytest))
+        trainingErrors.append(Test(w,X1,Y))
         
         if(i % 50 == 0):
             print('i', i)
