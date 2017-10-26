@@ -18,7 +18,6 @@ from import_data import import_data
 def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
     #y = np.array(Y)
     L = len(w)
-    summation = np.array([[0]*(Ncol)]*L)
     derivative = np.array([[0]*(Ncol)]*L)
     lorenz = 0
     X = np.array(X)
@@ -27,6 +26,7 @@ def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
     for k in range(Nrow):
         #row = np.array(Row)
         product_y = product_Y[k][Y[k]]#np.dot(w[Y[k]],row)
+        summation = np.array([[0]*(Ncol)]*L)
         #sumj = []
         for j in range(L):
             #vec = [0] * Ncol #stays zero unless y != j and prod <= 0
@@ -37,7 +37,7 @@ def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
                 #print('py', product_y)
                 if prod <= 0:
                     #print(summation[j], - (2 * prod / (1 + prod*prod)) * X[k])
-                    summation[j] = summation[j] - (2 * prod / (1 + prod*prod)) * X[k]#row
+                    summation[j] = summation[j] - ((2 * prod) / (1 + prod*prod)) * X[k]#row
                     lorenz += np.log(1 + (prod)**2)
             #sumj.append(vec)
 	
@@ -71,8 +71,8 @@ def updateWeights1(X,Y,w, Ncol,Nrow, learningRate, s):
     #print('pY,', product_Y)
     for l in range(L):
         diff = (Uy - U[:,l]) - 1
-        diff = np.array([-(2 * d / (1 + d*d)) if d < 0 else 0 for d in diff])
-        logical = [l == Y[i] for i in range(Nrow)]
+        diff = np.array([-((2 * d) / (1 + d*d)) if d < 0 else 0 for d in diff])
+        logical = [l != Y[i] for i in range(Nrow)]
         diff = diff * logical
         lorenz += sum(np.log(1 + diff**2))
         derivative[l] = np.sum(diff * X.transpose())
@@ -139,7 +139,7 @@ def TrainWeights(X,Y,Xtest,Ytest,niter,k, learnRate = .01):
     for i in range(niter):
         
         #print('Mi', Mi)
-        w, newloss = updateWeights1(X1,Y,w, Ncol,Nrow, learnRate, s)
+        w, newloss = updateWeights(X1,Y,w, Ncol,Nrow, learnRate, s)
         loss.append(newloss)
         if Ncol > k:
             Mi = getMi(Ncol, k, niter, i, u = 100)
@@ -161,7 +161,7 @@ def getMBest(w, X, Xtest, M, Ncol):
     #print(len(summation))
     best = sorted(range(len(summation)), key=lambda i: summation[i])[-M:]
     worst = sorted(range(len(summation)), key = lambda i: summation[i])[0:(Ncol - M)]
-    w = np.array([[x[i] for i in best] for x in w])
+    w = np.array([[x[i] for i in sorted(best)] for x in w])
     X.drop(X.columns[worst], axis=1, inplace=True)
     Xtest.drop(Xtest.columns[worst], axis=1, inplace=True)
     #print(np.shape(X))
