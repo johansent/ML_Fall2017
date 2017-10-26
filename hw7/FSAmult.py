@@ -19,6 +19,7 @@ def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
     #y = np.array(Y)
     L = len(w)
     summation = np.array([[0]*(Ncol)]*L)
+    derivative = np.array([[0]*(Ncol)]*L)
     lorenz = 0
     X = np.array(X)
     product_Y = np.dot(X, np.transpose(w))
@@ -51,8 +52,8 @@ def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
             #else:
             #lorenz.append(0)
         
-        derivative = summation + (s * w)
-        w = w - (learningRate * derivative)    
+        derivative += summation 
+    w = w - (learningRate * (derivative+ (s * w)))    
     
     loss = (lorenz + L* s * np.linalg.norm(w, 'fro'))
     
@@ -99,8 +100,8 @@ def TrainWeights(X,Y,Xtest,Ytest,niter,k, learnRate = .01):
     Nrow = len(X)
     Ncol = len(X.columns)
     L = 7
-    Y = np.array([y for y in Y[0]])
-    Ytest = np.array([y for y in Ytest[0]])
+    Y = np.array(Y)[:,0]
+    Ytest = np.array(Ytest)[:,0]
     #print(np.shape(Y))
     X1 = X.copy()
     Xtest1 = Xtest.copy()
