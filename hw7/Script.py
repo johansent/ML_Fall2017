@@ -17,10 +17,10 @@ from import_data import import_data
 
 
 def Analysis(X,Y,Xtest,Ytest,learnRate, name, min_table):
-    niter = 100
+    niter = 20
     testErrors = []
     trainErrors = []
-    K = [5,9,18]#,27,36]
+    K = [5,9,36]#,27,36]
     for k in K:
         print(k)
         y1, y2, loss = FSAmult.TrainWeights(X,Y,Xtest,Ytest,niter,k,learnRate)

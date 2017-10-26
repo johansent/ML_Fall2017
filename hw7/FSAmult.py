@@ -38,7 +38,7 @@ def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
                 if prod <= 0:
                     #print(summation[j], - (2 * prod / (1 + prod*prod)) * X[k])
                     summation[j] = summation[j] - (2 * prod / (1 + prod*prod)) * X[k]#row
-                    lorenz += np.log(1 + (prod - 1)**2)
+                    lorenz += np.log(1 + (prod)**2)
             #sumj.append(vec)
 	
 #        if k == 0:
@@ -58,7 +58,30 @@ def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
     loss = (lorenz + L* s * np.linalg.norm(w, 'fro'))
     
     return w, loss
+
+def updateWeights1(X,Y,w, Ncol,Nrow, learningRate, s):
+    #y = np.array(Y)
+    L = len(w)
+    #summation = np.array([[0]*(Ncol)]*L)
+    derivative = np.array([[0]*(Ncol)]*L)
+    lorenz = 0
+    X = np.array(X)
+    U = np.dot(X, np.transpose(w))
+    Uy = [U[i][Y[i]] for i in range(Nrow)]
+    #print('pY,', product_Y)
+    for l in range(L):
+        diff = (Uy - U[:,l]) - 1
+        diff = np.array([-(2 * d / (1 + d*d)) if d < 0 else 0 for d in diff])
+        logical = [l == Y[i] for i in range(Nrow)]
+        diff = diff * logical
+        lorenz += sum(np.log(1 + diff**2))
+        derivative[l] = np.sum(diff * X.transpose())
+        
+    w = w - (learningRate * (derivative + (s * w)))    
     
+    loss = (lorenz + L* s * np.linalg.norm(w, 'fro'))
+    
+    return w, loss
         
     
     
@@ -116,7 +139,7 @@ def TrainWeights(X,Y,Xtest,Ytest,niter,k, learnRate = .01):
     for i in range(niter):
         
         #print('Mi', Mi)
-        w, newloss = updateWeights(X1,Y,w, Ncol,Nrow, learnRate, s)
+        w, newloss = updateWeights1(X1,Y,w, Ncol,Nrow, learnRate, s)
         loss.append(newloss)
         if Ncol > k:
             Mi = getMi(Ncol, k, niter, i, u = 100)
