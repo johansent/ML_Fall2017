@@ -17,10 +17,10 @@ from import_data import import_data
 
 
 def Analysis(X,Y,Xtest,Ytest,learnRate, name, min_table):
-    niter = 20
+    niter = 50
     testErrors = []
     trainErrors = []
-    K = [5,9,36]#,27,36]
+    K = [5,9,21,27,36]
     for k in K:
         print(k)
         y1, y2, loss = FSAmult.TrainWeights(X,Y,Xtest,Ytest,niter,k,learnRate)
@@ -45,7 +45,7 @@ min_table = {}
 #Satimage Data
 X, Y, Xtest, Ytest = import_data('satimage', 'X.dat', 'Xtest.dat', 'Y.dat', 'Ytest.dat', head = None, norm = True)
 #print(type(Y))
-min_Table = Analysis(X,Y,Xtest,Ytest,.001, 'Satimage', min_table)
+min_Table = Analysis(X,Y,Xtest,Ytest,.00001, 'Satimage', min_table)
 
 #covType Data
 #X, Y, Xtest, Ytest = import_data('covtype', 'covtype.data', head = None, norm = True, sep = ',', testIndex = 15120)

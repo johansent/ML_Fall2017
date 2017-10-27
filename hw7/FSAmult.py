@@ -18,15 +18,17 @@ from import_data import import_data
 def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
     #y = np.array(Y)
     L = len(w)
-    derivative = np.array([[0]*(Ncol)]*L)
+    derivative = np.array([[0.0]*(Ncol)]*L)
     lorenz = 0
     X = np.array(X)
     product_Y = np.dot(X, np.transpose(w))
+    total = 0
+    totals = 0
     #print('pY,', product_Y)
     for k in range(Nrow):
         #row = np.array(Row)
         product_y = product_Y[k][Y[k]]#np.dot(w[Y[k]],row)
-        summation = np.array([[0]*(Ncol)]*L)
+        summation = np.array([[0.0]*(Ncol)]*L)
         #sumj = []
         for j in range(L):
             #vec = [0] * Ncol #stays zero unless y != j and prod <= 0
@@ -37,8 +39,14 @@ def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
                 #print('py', product_y)
                 if prod <= 0:
                     #print(summation[j], - (2 * prod / (1 + prod*prod)) * X[k])
-                    summation[j] = summation[j] - ((2 * prod) / (1 + prod*prod)) * X[k]#row
+                    summation[j] = summation[j] - (((2 * prod) / (1 + prod*prod)) * X[k])#row
+                    #print(np.shape(- ((2 * prod) / (1 + prod*prod))))
+                    #print('X[k]', np.shape(X[k]))
                     lorenz += np.log(1 + (prod)**2)
+                    
+                    if j == 0:
+                        total +=  - (((2 * prod) / (1 + prod*prod)) *X[k])[0]
+                        totals += summation[0][0]
             #sumj.append(vec)
 	
 #        if k == 0:
@@ -53,9 +61,12 @@ def updateWeights(X,Y,w, Ncol,Nrow, learningRate, s):
             #lorenz.append(0)
         
         derivative += summation 
-    w = w - (learningRate * (derivative+ (s * w)))    
+    w = w - (learningRate * (derivative+ (s * w))) 
+    #print('w', w[0][0])
+    #print('derivative', derivative[0][0])
+    #print('total', total, 'total-s', totals)
     
-    loss = (lorenz + L* s * np.linalg.norm(w, 'fro'))
+    loss = (lorenz + s * np.linalg.norm(w, 'fro'))
     
     return w, loss
 
@@ -63,23 +74,29 @@ def updateWeights1(X,Y,w, Ncol,Nrow, learningRate, s):
     #y = np.array(Y)
     L = len(w)
     #summation = np.array([[0]*(Ncol)]*L)
-    derivative = np.array([[0]*(Ncol)]*L)
-    lorenz = 0
+    derivative = np.array([[0.0]*(Ncol)]*L)
+    lorenz = 0.0
     X = np.array(X)
     U = np.dot(X, np.transpose(w))
     Uy = [U[i][Y[i]] for i in range(Nrow)]
     #print('pY,', product_Y)
     for l in range(L):
         diff = (Uy - U[:,l]) - 1
-        diff = np.array([-((2 * d) / (1 + d*d)) if d < 0 else 0 for d in diff])
+        diff = np.array([-((2 * d) / (1 + d*d)) if d <= 0 else 0 for d in diff])
         logical = [l != Y[i] for i in range(Nrow)]
         diff = diff * logical
         lorenz += sum(np.log(1 + diff**2))
-        derivative[l] = np.sum(diff * X.transpose())
+        dmat = diff * X.transpose()
+        #print('l', l, '  dmat', np.shape(dmat), np.sum(dmat, axis = 1)[0])
+        derivative[l] = np.sum(dmat, axis = 1)
+        #print('dl', np.shape(derivative[l]))
+    total = [X[i][0] if logical[i] else 0 for i in range(Nrow)] 
+    #print('total', np.shape(total), sum(total))
         
-    w = w - (learningRate * (derivative + (s * w)))    
-    
-    loss = (lorenz + L* s * np.linalg.norm(w, 'fro'))
+    w = w - (learningRate * (derivative + (s * w))) 
+    #print('w', w[0][0])
+    #print('derivative', derivative[0][0])
+    loss = (lorenz + s * np.linalg.norm(w, 'fro'))
     
     return w, loss
         
