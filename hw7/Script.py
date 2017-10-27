@@ -42,14 +42,22 @@ import timeit
 start = timeit.default_timer()
 min_table = {}
 
-#Satimage Data
-X, Y, Xtest, Ytest = import_data('satimage', 'X.dat', 'Xtest.dat', 'Y.dat', 'Ytest.dat', head = None, norm = True)
-#print(type(Y))
-min_Table = Analysis(X,Y,Xtest,Ytest,.00001, 'Satimage', min_table)
+##Satimage Data
+#X, Y, Xtest, Ytest = import_data('satimage', 'X.dat', 'Xtest.dat', 'Y.dat', 'Ytest.dat', head = None, norm = True)
+##print(np.shape(Y))
+#Y = np.array(Y)[:,0]
+#Ytest = np.array(Ytest)[:,0]
+##print(type(Y))
+##min_Table = Analysis(X,Y,Xtest,Ytest,.00001, 'Satimage', min_table)
 
 #covType Data
-#X, Y, Xtest, Ytest = import_data('covtype', 'covtype.data', head = None, norm = True, sep = ',', testIndex = 15120)
-
+X, Y, Xtest, Ytest = import_data('covtype', 'covtype.data', head = None, norm = True, sep = ',', testIndex = 15120)
+#print(np.shape(Y))
+#print(min(Y), max(Y))
+Y = np.array(Y) - 1
+Ytest = np.array(Ytest) - 1
+#print(min(Y), max(Y))
+min_Table = Analysis(X,Y,Xtest,Ytest,.00001, 'Cov-Type', min_table)
 
 
 
