@@ -17,7 +17,7 @@ from import_data import import_data
 
 
 def Analysis(X,Y,Xtest,Ytest,learnRate, name, min_table):
-    niter = 50
+    niter = 500
     testErrors = []
     trainErrors = []
     K = [5,9,21,27,36]
@@ -48,7 +48,7 @@ min_table = {}
 #Y = np.array(Y)[:,0]
 #Ytest = np.array(Ytest)[:,0]
 ##print(type(Y))
-##min_Table = Analysis(X,Y,Xtest,Ytest,.00001, 'Satimage', min_table)
+#min_Table = Analysis(X,Y,Xtest,Ytest,.00001, 'Satimage', min_table)
 
 #covType Data
 X, Y, Xtest, Ytest = import_data('covtype', 'covtype.data', head = None, norm = True, sep = ',', testIndex = 15120)

@@ -1,0 +1,131 @@
+---
+title: "Homework 8 - LogitBoost"
+author: "Thomas Johansen"
+date: "October 30, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+## Read data
+path <- "C:/Users/joh10/Desktop/FSU/FA17/5635/git/Data/gisette/"
+X <- read.delim(paste0(path, "gisette_train.data"), sep = " ", header = FALSE)
+summary(X[,ncol(X)])
+X <- X[,-ncol(X)]
+dim(X)
+Y <- read.delim(paste0(path, "gisette_train.labels"), header = FALSE)
+colnames(Y) <- "Y"
+dftrain <- data.frame(Y, X)
+```
+
+### Gisette
+```{r}
+Xtest <- read.delim(paste0(path, "gisette_valid.data"), sep = " ", header = FALSE)
+summary(Xtest[,ncol(Xtest)])
+Xtest <- Xtest[,-ncol(Xtest)]
+dim(Xtest)
+Ytest <- read.delim(paste0(path, "gisette_valid.labels"), header = FALSE)
+colnames(Ytest) <- "Y"
+dftest <- data.frame(Ytest, Xtest)
+```
+
+```{r}
+## run logitboost
+library(ada)
+set.seed(5)
+# profvis::profvis(logitBoost <- ada(Y ~ ., data = dftrain, loss="logistic", iter=1, verbose = FALSE))
+system.time(logitBoost <- ada(Y ~ ., data = dftrain[,1:21], loss="logistic", iter=10, verbose = FALSE))
+summary(logitBoost)
+plot(logitBoost$model$plot_loss)
+plot(logitBoost)
+```
+
+```{r}
+trace(ada:::ada.default, edit = TRUE)
+trace(ada:::ada.machine, edit = TRUE)
+
+#untrace(ada:::ada.default)
+```
+
+```{r}
+## run logitboost
+library(ada)
+set.seed(5)
+# profvis::profvis(logitBoost <- ada(Y ~ ., data = dftrain, loss="logistic", iter=1, verbose = FALSE))
+system.time(logitBoost <- ada(X[,1:20], Y$Y, Xtest[,1:20], Ytest$Y, loss="logistic", iter=10, verbose = FALSE))
+summary(logitBoost)
+plot(logitBoost$model$plot_loss)
+plot(logitBoost)
+```
+
+### Madelon
+```{r}
+## Read data
+path <- "C:/Users/joh10/Desktop/FSU/FA17/5635/git/Data/madelon/"
+X <- read.delim(paste0(path, "madelon_train.data"), sep = " ", header = FALSE)
+summary(X[,ncol(X)])
+X <- X[,-ncol(X)]
+dim(X)
+Y <- read.delim(paste0(path, "madelon_train.labels"), header = FALSE)
+colnames(Y) <- "Y"
+dftrain <- data.frame(Y, X)
+```
+
+```{r}
+Xtest <- read.delim(paste0(path, "madelon_valid.data"), sep = " ", header = FALSE)
+summary(Xtest[,ncol(Xtest)])
+Xtest <- Xtest[,-ncol(Xtest)]
+dim(Xtest)
+Ytest <- read.delim(paste0(path, "madelon_valid.labels"), header = FALSE)
+colnames(Ytest) <- "Y"
+dftest <- data.frame(Ytest, Xtest)
+```
+
+```{r}
+## run logitboost
+library(ada)
+set.seed(5)
+# profvis::profvis(logitBoost <- ada(Y ~ ., data = dftrain, loss="logistic", iter=1, verbose = FALSE))
+system.time(logitBoost <- ada(X, Y$Y, Xtest, Ytest$Y, loss="logistic", iter=10, verbose = FALSE))
+summary(logitBoost)
+plot(logitBoost$model$plot_loss)
+plot(logitBoost)
+```
+
+
+### Hill-Valley
+```{r}
+## Read data
+path <- "C:/Users/joh10/Desktop/FSU/FA17/5635/git/Data/hill_valley/"
+X <- read.delim(paste0(path, "X.dat"), sep = " ", header = FALSE)
+summary(X[,ncol(X)])
+# X <- X[,-ncol(X)]
+dim(X)
+Y <- read.delim(paste0(path, "Y.dat"), header = FALSE)
+colnames(Y) <- "Y"
+dftrain <- data.frame(Y, X)
+```
+
+```{r}
+Xtest <- read.delim(paste0(path, "Xtest.dat"), sep = " ", header = FALSE)
+summary(Xtest[,ncol(Xtest)])
+# Xtest <- Xtest[,-ncol(Xtest)]
+dim(Xtest)
+Ytest <- read.delim(paste0(path, "Ytest.dat"), header = FALSE)
+colnames(Ytest) <- "Y"
+dftest <- data.frame(Ytest, Xtest)
+```
+
+```{r}
+## run logitboost
+library(ada)
+set.seed(5)
+# profvis::profvis(logitBoost <- ada(Y ~ ., data = dftrain, loss="logistic", iter=1, verbose = FALSE))
+system.time(logitBoost <- ada(X, Y$Y, Xtest, Ytest$Y, loss="logistic", iter=10, verbose = FALSE))
+summary(logitBoost)
+plot(logitBoost$model$plot_loss)
+plot(logitBoost)
+```
