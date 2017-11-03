@@ -1,6 +1,6 @@
 ---
 title: "Homework 8 - LogitBoost"
-author: "Thomas Johansen"
+author: "Thomas Johansen and Kyle Shaw"
 date: "October 30, 2017"
 output: html_document
 ---
